@@ -19,8 +19,7 @@
   ],
   "kuis": [
     {
-      "id": 1,
-      "pertanyaan": "Ibukota Indonesia adalah?",
+      "pertanyaan": "Ibukota negara Indonesia adalah?",
       "pilihan": [
         "Jakarta",
         "Bandung",
@@ -30,7 +29,8 @@
       "jawaban": 0,
       "penjelasan": "Jakarta adalah ibukota negara Indonesia sejak tahun 1945",
       "kategori": "Pengetahuan Umum",
-      "level": "Mudah"
+      "level": "Menengah",
+      "id": 1
     },
     {
       "id": 2,
@@ -59,20 +59,6 @@
       "penjelasan": "Merkurius adalah planet terdekat dari Matahari dalam tata surya kita",
       "kategori": "IPA",
       "level": "Menengah"
-    },
-    {
-      "pertanyaan": "siapa pahlawan asal aceh berikut",
-      "pilihan": [
-        "soekarno",
-        "hatta",
-        "diponegoro",
-        "teuku umar"
-      ],
-      "jawaban": 3,
-      "penjelasan": "",
-      "kategori": "IPAS",
-      "level": "Menengah",
-      "id": 4
     }
   ],
   "leaderboard": [
