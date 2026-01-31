@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Kelas 6 - SDN Contoh</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/image/logo.png">
+</head>
+<body>
+    <!-- Header dengan Logo & Nav -->
+    <header>
+        <div class="logo">
+            <img src="assets/image/logo.png" alt="Logo">
+            <h1>Kelas 6</h1>
+        </div>
+        <nav>
+            <a href="index.html">Beranda</a>
+            <a href="page/jadwal.html">Jadwal</a>
+            <a href="page/galeri.html">Galeri</a>
+            <a href="page/kuis.html">Kuis</a>
+            <a href="page/pengumuman.html">Pengumuman</a>
+            <a href="page/admin.html" class="admin-btn">Admin</a>
+        </nav>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Selamat Datang di Portal Digital Kelas 6</h2>
+        <p>Akses jadwal, galeri, kuis, dan pengumuman terbaru</p>
+    </section>
+
+    <!-- Menu Grid -->
+    <section class="menu-grid">
+        <div class="card" onclick="location.href='page/jadwal.html'">
+            <div class="icon">📅</div>
+            <h3>Jadwal Pelajaran</h3>
+            <p>Lihat jadwal pelajaran terkini</p>
+        </div>
+        
+        <div class="card" onclick="location.href='page/galeri.html'">
+            <div class="icon">🖼️</div>
+            <h3>Galeri Foto</h3>
+            <p>Koleksi foto kegiatan kelas</p>
+        </div>
+        
+        <div class="card" onclick="location.href='page/kuis.html'">
+            <div class="icon">🧠</div>
+            <h3>Kuis Interaktif</h3>
+            <p>Uji pengetahuan dengan kuis seru</p>
+        </div>
+        
+        <div class="card" onclick="location.href='page/pengumuman.html'">
+            <div class="icon">📢</div>
+            <h3>Pengumuman</h3>
+            <p>Info terbaru dari guru</p>
+        </div>
+    </section>
+
+    <!-- Pengumuman Terbaru -->
+    <section class="pengumuman-terbaru">
+        <h2>Pengumuman Terbaru</h2>
+        <div id="pengumuman-list" class="pengumuman-container">
+            <!-- Pengumuman akan dimuat via JavaScript -->
+            <div class="loading">Memuat pengumuman...</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Kelas 6 - Dibuat dengan ❤️</p>
+        <p>Hosted on <a href="https://dianpamungkas24-cloud.github.io/kelas6/" target="_blank">GitHub Pages</a></p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

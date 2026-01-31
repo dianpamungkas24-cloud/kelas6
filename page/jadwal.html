@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran - Portal Kelas 6</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="../assets/image/logo.png">
+    <style>
+        .jadwal-container {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .jadwal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .jadwal-image-container {
+            max-width: 100%;
+            overflow: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .jadwal-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .jadwal-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #2ecc71;
+        }
+        
+        .btn-secondary:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="../assets/image/logo.png" alt="Logo">
+            <h1>Kelas 6</h1>
+        </div>
+        <nav>
+            <a href="../index.html">Beranda</a>
+            <a href="jadwal.html" class="active">Jadwal</a>
+            <a href="galeri.html">Galeri</a>
+            <a href="kuis.html">Kuis</a>
+            <a href="pengumuman.html">Pengumuman</a>
+            <a href="admin.html" class="admin-btn">Admin</a>
+        </nav>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <main class="jadwal-container">
+        <div class="jadwal-header">
+            <h1>Jadwal Pelajaran Kelas 6</h1>
+            <div class="btn-group">
+                <button class="btn" onclick="downloadJadwal()">📥 Download Jadwal</button>
+                <button class="btn btn-secondary" onclick="location.reload()">🔄 Refresh</button>
+            </div>
+        </div>
+        
+        <div class="jadwal-image-container">
+            <img id="jadwal-image" src="" alt="Jadwal Pelajaran" class="jadwal-image">
+        </div>
+        
+        <div class="jadwal-info">
+            <p id="last-updated">Memperbarui jadwal...</p>
+            <p>Jadwal akan otomatis diperbarui setiap 5 menit</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Kelas 6 - Dibuat dengan ❤️</p>
+        <p>Hosted on <a href="https://dianpamungkas24-cloud.github.io/kelas6/" target="_blank">GitHub Pages</a></p>
+    </footer>
+
+    <script src="../assets/js/jadwal.js"></script>
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman - Portal Kelas 6</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="../assets/image/logo.png">
+    <style>
+        .pengumuman-main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pengumuman-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .pengumuman-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .pengumuman-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .pengumuman-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .pengumuman-date {
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+        
+        .pengumuman-content {
+            padding: 20px;
+        }
+        
+        .pengumuman-content h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .pengumuman-excerpt {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .pengumuman-category {
+            display: inline-block;
+            background: #e8f4fc;
+            color: #3498db;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+        
+        @media (max-width: 768px) {
+            .pengumuman-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="../assets/image/logo.png" alt="Logo">
+            <h1>Kelas 6</h1>
+        </div>
+        <nav>
+            <a href="../index.html">Beranda</a>
+            <a href="jadwal.html">Jadwal</a>
+            <a href="galeri.html">Galeri</a>
+            <a href="kuis.html">Kuis</a>
+            <a href="pengumuman.html" class="active">Pengumuman</a>
+            <a href="admin.html" class="admin-btn">Admin</a>
+        </nav>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <main class="pengumuman-main">
+        <div class="pengumuman-header">
+            <h1>Pengumuman Kelas 6</h1>
+            <p>Informasi terbaru dari guru dan sekolah</p>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" 
+                   id="search-input" 
+                   class="search-box" 
+                   placeholder="🔍 Cari pengumuman..."
+                   onkeyup="searchPengumuman()">
+        </div>
+        
+        <div id="pengumuman-container" class="pengumuman-grid">
+            <div class="loading">Memuat pengumuman...</div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Kelas 6 - Dibuat dengan ❤️</p>
+        <p>Hosted on <a href="https://dianpamungkas24-cloud.github.io/kelas6/" target="_blank">GitHub Pages</a></p>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+    <script>
+        // Fungsi untuk memuat pengumuman
+        async function loadPengumuman() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/dianpamungkas24-cloud/kelas6/main/data.json');
+                const data = await response.json();
+                displayPengumuman(data.pengumuman || []);
+            } catch (error) {
+                console.error('Error loading pengumuman:', error);
+                document.getElementById('pengumuman-container').innerHTML = 
+                    '<div class="no-results">Gagal memuat pengumuman</div>';
+            }
+        }
+        
+        // Fungsi untuk menampilkan pengumuman
+        function displayPengumuman(pengumumanList) {
+            const container = document.getElementById('pengumuman-container');
+            
+            if (!pengumumanList || pengumumanList.length === 0) {
+                container.innerHTML = '<div class="no-results">Belum ada pengumuman</div>';
+                return;
+            }
+            
+            // Urutkan berdasarkan tanggal terbaru
+            pengumumanList.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            const html = pengumumanList.map(item => `
+                <div class="pengumuman-card" onclick="showPengumumanDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                    <div class="pengumuman-date">
+                        ${new Date(item.tanggal).toLocaleDateString('id-ID', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </div>
+                    <div class="pengumuman-content">
+                        <h3>${item.judul}</h3>
+                        <div class="pengumuman-excerpt">
+                            ${item.konten.substring(0, 150)}${item.konten.length > 150 ? '...' : ''}
+                        </div>
+                        ${item.kategori ? `<span class="pengumuman-category">${item.kategori}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        // Fungsi pencarian
+        function searchPengumuman() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.pengumuman-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const content = card.querySelector('.pengumuman-excerpt').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Fungsi untuk menampilkan detail pengumuman
+        function showPengumumanDetail(pengumuman) {
+            const modalHtml = `
+                <div class="modal" id="pengumuman-modal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 30px;
+                        border-radius: 15px;
+                        max-width: 800px;
+                        width: 90%;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                    ">
+                        <div style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 20px;
+                        ">
+                            <h2 style="margin: 0;">${pengumuman.judul}</h2>
+                            <button onclick="closeModal()" style="
+                                background: none;
+                                border: none;
+                                font-size: 24px;
+                                cursor: pointer;
+                                color: #666;
+                            ">&times;</button>
+                        </div>
+                        
+                        <div style="
+                            background: #3498db;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 5px;
+                            margin-bottom: 20px;
+                        ">
+                            ${new Date(pengumuman.tanggal).toLocaleDateString('id-ID', { 
+                                weekday: 'long', 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}
+                            ${pengumuman.kategori ? ` | Kategori: ${pengumuman.kategori}` : ''}
+                        </div>
+                        
+                        <div style="
+                            line-height: 1.8;
+                            color: #333;
+                            margin-bottom: 20px;
+                        ">
+                            ${pengumuman.konten}
+                        </div>
+                        
+                        ${pengumuman.lampiran ? `
+                            <div style="margin-top: 20px;">
+                                <strong>Lampiran:</strong>
+                                <a href="${pengumuman.lampiran}" target="_blank" style="
+                                    color: #3498db;
+                                    text-decoration: none;
+                                ">📎 ${pengumuman.lampiran.split('/').pop()}</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        
+        // Fungsi untuk menutup modal
+        function closeModal() {
+            const modal = document.getElementById('pengumuman-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Load pengumuman saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', loadPengumuman);
+    </script>
+</body>
+</html>

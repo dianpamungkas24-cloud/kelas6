@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif - Portal Kelas 6</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="../assets/image/logo.png">
+    <style>
+        .kuis-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .kuis-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .quiz-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .timer {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .quiz-question {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .result-score {
+            font-size: 48px;
+            color: #2ecc71;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .leaderboard {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard th, .leaderboard td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .leaderboard th {
+            background: #3498db;
+            color: white;
+        }
+        
+        .leaderboard tr:hover {
+            background: #e8f4fc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="../assets/image/logo.png" alt="Logo">
+            <h1>Kelas 6</h1>
+        </div>
+        <nav>
+            <a href="../index.html">Beranda</a>
+            <a href="jadwal.html">Jadwal</a>
+            <a href="galeri.html">Galeri</a>
+            <a href="kuis.html" class="active">Kuis</a>
+            <a href="pengumuman.html">Pengumuman</a>
+            <a href="admin.html" class="admin-btn">Admin</a>
+        </nav>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </header>
+
+    <main class="kuis-container">
+        <div class="kuis-header">
+            <h1>Kuis Interaktif</h1>
+            <p>Uji pengetahuanmu dengan kuis seru ini!</p>
+        </div>
+        
+        <div id="quiz-container" class="quiz-card">
+            <div class="quiz-progress">
+                <div>Soal <span id="current-question">1</span> dari <span id="total-questions">10</span></div>
+                <div class="timer">⏱️ <span id="timer">30</span> detik</div>
+            </div>
+            
+            <div id="question" class="quiz-question">
+                Memuat pertanyaan...
+            </div>
+            
+            <div id="options" class="options-container">
+                <!-- Opsi akan dimuat di sini -->
+            </div>
+            
+            <div class="quiz-controls">
+                <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn">Lanjut →</button>
+                <button class="btn btn-secondary" onclick="startQuiz()" id="start-btn">Mulai Kuis</button>
+            </div>
+        </div>
+        
+        <div id="result-container" class="result-container">
+            <h2>Hasil Kuis</h2>
+            <div class="result-score" id="final-score">0</div>
+            <p id="result-message"></p>
+            <button class="btn btn-primary" onclick="startQuiz()">Main Lagi</button>
+            
+            <div class="leaderboard">
+                <h3>🏆 Leaderboard</h3>
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Peringkat</th>
+                            <th>Nama</th>
+                            <th>Skor</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Data leaderboard akan dimuat di sini -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Kelas 6 - Dibuat dengan ❤️</p>
+        <p>Hosted on <a href="https://dianpamungkas24-cloud.github.io/kelas6/" target="_blank">GitHub Pages</a></p>
+    </footer>
+
+    <script src="../assets/js/kuis.js"></script>
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

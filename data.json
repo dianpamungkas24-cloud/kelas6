@@ -1,0 +1,66 @@
+{
+  "pengumuman": [
+    {
+      "id": 1,
+      "judul": "Selamat Datang di Tahun Ajaran Baru",
+      "konten": "Selamat datang para siswa kelas 6 di tahun ajaran baru 2024/2025. Mari kita mulai dengan semangat belajar yang tinggi!",
+      "tanggal": "2024-07-15T00:00:00.000Z",
+      "kategori": "Akademik",
+      "lampiran": null
+    },
+    {
+      "id": 2,
+      "judul": "Jadwal Ujian Tengah Semester",
+      "konten": "Ujian Tengah Semester akan dilaksanakan pada tanggal 15-20 September 2024. Persiapkan diri dengan belajar giat.",
+      "tanggal": "2024-08-20T00:00:00.000Z",
+      "kategori": "Ujian",
+      "lampiran": "https://example.com/jadwal-uts.pdf"
+    }
+  ],
+  "kuis": [
+    {
+      "id": 1,
+      "pertanyaan": "Ibukota Indonesia adalah?",
+      "pilihan": ["Jakarta", "Bandung", "Surabaya", "Medan"],
+      "jawaban": 0,
+      "penjelasan": "Jakarta adalah ibukota negara Indonesia sejak tahun 1945",
+      "kategori": "Pengetahuan Umum",
+      "level": "Mudah"
+    },
+    {
+      "id": 2,
+      "pertanyaan": "Berapakah hasil dari 25 × 4?",
+      "pilihan": ["80", "90", "100", "110"],
+      "jawaban": 2,
+      "penjelasan": "25 × 4 = 100",
+      "kategori": "Matematika",
+      "level": "Mudah"
+    },
+    {
+      "id": 3,
+      "pertanyaan": "Planet terdekat dari Matahari adalah?",
+      "pilihan": ["Bumi", "Mars", "Venus", "Merkurius"],
+      "jawaban": 3,
+      "penjelasan": "Merkurius adalah planet terdekat dari Matahari dalam tata surya kita",
+      "kategori": "IPA",
+      "level": "Menengah"
+    }
+  ],
+  "leaderboard": [
+    {
+      "nama": "Andi",
+      "skor": 95,
+      "tanggal": "2024-01-15"
+    },
+    {
+      "nama": "Budi",
+      "skor": 88,
+      "tanggal": "2024-01-14"
+    },
+    {
+      "nama": "Sari",
+      "skor": 92,
+      "tanggal": "2024-01-13"
+    }
+  ]
+}
