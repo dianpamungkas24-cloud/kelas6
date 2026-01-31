@@ -3,9 +3,9 @@
     {
       "id": 1,
       "judul": "7 Kebiasaan Anak Indonesia Hebat",
-      "konten": "Segera kirim foto 7 kebiasaan anak indonesia hebat paling lambat minggu, 1 februari 2026 ayo",
+      "konten": "Segera kirim foto 7 kebiasaan anak indonesia hebat paling lambat minggu, 1 februari 2026",
       "kategori": "Akademik",
-      "lampiran": "",
+      "lampiran": null,
       "tanggal": "2024-07-15T00:00:00.000Z"
     },
     {
@@ -15,6 +15,14 @@
       "kategori": "bjk",
       "lampiran": "",
       "tanggal": "2026-01-31T12:25:07.416Z"
+    },
+    {
+      "id": 3,
+      "judul": "7 Kebiasaan Anak Indonesia Hebat",
+      "konten": "vdfdfdf",
+      "kategori": "dsf",
+      "lampiran": "",
+      "tanggal": "2026-01-31T12:32:11.381Z"
     }
   ],
   "kuis": [
