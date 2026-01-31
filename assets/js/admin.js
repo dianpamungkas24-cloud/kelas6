@@ -158,7 +158,7 @@ async function uploadJadwal() {
             const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/jadwal/jadwal.jpg`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `token ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json'
                 },
@@ -238,7 +238,7 @@ async function uploadGaleri() {
             const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `token ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json'
                 },
@@ -356,7 +356,7 @@ async function deleteFoto(path, sha) {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `token ${token}`,
                 'Content-Type': 'application/json',
                 'Accept': 'application/vnd.github.v3+json'
             },
@@ -444,13 +444,184 @@ async function loadPengumumanData(id) {
     }
 }
 
-// Fungsi untuk save pengumuman
+// FUNGSI UTAMA: save to GitHub - PERBAIKAN
+async function saveToGitHub(path, data, message) {
+    const token = localStorage.getItem('github_token');
+    if (!token) {
+        showStatus('error', 'GitHub Token tidak ditemukan');
+        return false;
+    }
+    
+    try {
+        console.log('🚀 Starting saveToGitHub:', { path, message });
+        console.log('Data to save:', data);
+        
+        // 1. Get current file SHA
+        let sha = null;
+        try {
+            console.log('📡 Fetching existing file...');
+            const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            console.log('Get response status:', getResponse.status);
+            
+            if (getResponse.ok) {
+                const fileData = await getResponse.json();
+                sha = fileData.sha;
+                console.log('✅ Got existing file SHA:', sha ? sha.substring(0, 20) + '...' : 'null');
+            } else if (getResponse.status === 404) {
+                console.log('📄 File does not exist yet, will create new');
+            } else {
+                const errorData = await getResponse.json();
+                console.error('❌ Error getting file:', errorData);
+                showStatus('error', `Gagal membaca file: ${errorData.message}`);
+                return false;
+            }
+        } catch (e) {
+            console.error('❌ Exception getting file SHA:', e);
+        }
+        
+        // 2. Convert data to base64 (CARA YANG LEBIH TEPAT)
+        console.log('🔧 Converting data to base64...');
+        const jsonString = JSON.stringify(data, null, 2);
+        console.log('JSON string (first 100 chars):', jsonString.substring(0, 100));
+        
+        // Cara yang benar untuk base64 encoding
+        let base64Content;
+        try {
+            // Menggunakan TextEncoder untuk encoding yang lebih reliable
+            const encoder = new TextEncoder();
+            const dataArray = encoder.encode(jsonString);
+            let binary = '';
+            const bytes = new Uint8Array(dataArray);
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            base64Content = btoa(binary);
+            console.log('✅ Base64 conversion successful');
+        } catch (encodeError) {
+            console.error('❌ Base64 conversion failed:', encodeError);
+            // Fallback method
+            base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+        }
+        
+        console.log('Base64 length:', base64Content.length);
+        
+        // 3. Prepare request body
+        const requestBody = {
+            message: message,
+            content: base64Content,
+            branch: GITHUB_BRANCH
+        };
+        
+        // Hanya tambah SHA jika file sudah ada
+        if (sha) {
+            requestBody.sha = sha;
+        }
+        
+        console.log('📤 Sending to GitHub...');
+        console.log('Request body:', {
+            message: message,
+            content_length: base64Content.length,
+            has_sha: !!sha
+        });
+        
+        // 4. Upload to GitHub
+        const updateResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('📥 GitHub response status:', updateResponse.status);
+        
+        const result = await updateResponse.json();
+        console.log('GitHub response:', result);
+        
+        if (updateResponse.ok) {
+            console.log('✅ Save successful!');
+            console.log('Commit SHA:', result.commit.sha);
+            showStatus('success', 'Data berhasil disimpan!');
+            return true;
+        } else {
+            console.error('❌ GitHub error:', result.message);
+            
+            // Tampilkan error yang lebih detail
+            let errorMsg = 'Gagal menyimpan data';
+            if (result.message) {
+                errorMsg += `: ${result.message}`;
+            }
+            if (result.errors) {
+                errorMsg += ` | Errors: ${JSON.stringify(result.errors)}`;
+            }
+            
+            showStatus('error', errorMsg);
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error saving to GitHub:', error);
+        showStatus('error', `Gagal menyimpan: ${error.message}`);
+        return false;
+    }
+}
+
+// Alternatif save method yang lebih sederhana
+async function simpleSaveToGitHub(path, data, message) {
+    const token = localStorage.getItem('github_token');
+    if (!token) {
+        alert('Token tidak ditemukan');
+        return false;
+    }
+    
+    // Convert to base64 dengan cara paling sederhana
+    const jsonString = JSON.stringify(data, null, 2);
+    const base64Content = btoa(jsonString);
+    
+    try {
+        // Coba tanpa SHA dulu (force create/update)
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                content: base64Content,
+                branch: GITHUB_BRANCH
+                // Tidak pakai SHA, biarkan GitHub handle conflict
+            })
+        });
+        
+        const result = await response.json();
+        console.log('Simple save result:', result);
+        
+        return response.ok;
+    } catch (error) {
+        console.error('Simple save error:', error);
+        return false;
+    }
+}
+
+// Fungsi untuk save pengumuman - DENGAN DEBUG DETAIL
 async function savePengumuman() {
     const judul = document.getElementById('pengumuman-judul').value;
     const konten = document.getElementById('pengumuman-konten').value;
     const kategori = document.getElementById('pengumuman-kategori').value;
     const lampiran = document.getElementById('pengumuman-lampiran').value;
     const id = document.getElementById('pengumuman-id').value;
+    
+    console.log('💾 Saving pengumuman:', { judul, id, kategori });
     
     if (!judul || !konten) {
         showStatus('error', 'Judul dan konten harus diisi');
@@ -459,13 +630,16 @@ async function savePengumuman() {
     
     try {
         // Load current data
+        console.log('📥 Loading current data...');
         const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
-        let data;
         
+        let data;
         if (response.ok) {
             data = await response.json();
+            console.log('✅ Current data loaded:', data);
         } else {
             // Jika file tidak ada, buat yang baru
+            console.log('📄 Creating new data file...');
             data = {
                 pengumuman: [],
                 kuis: [],
@@ -477,55 +651,84 @@ async function savePengumuman() {
             data.pengumuman = [];
         }
         
-        if (id) {
+        console.log('📊 Current announcements:', data.pengumuman.length);
+        console.log('Current announcements IDs:', data.pengumuman.map(p => p.id));
+        
+        let isUpdate = false;
+        
+        if (id && id !== '') {
             // Update existing
+            console.log('✏️ Updating existing announcement ID:', id);
             const index = data.pengumuman.findIndex(p => p.id == id);
             if (index !== -1) {
+                isUpdate = true;
                 data.pengumuman[index] = {
                     id: parseInt(id),
                     judul,
                     konten,
-                    kategori,
-                    lampiran: lampiran || null,
+                    kategori: kategori || '',
+                    lampiran: lampiran || '',
                     tanggal: data.pengumuman[index].tanggal // Keep original date
                 };
+                console.log('✅ Updated announcement at index:', index);
             } else {
-                showStatus('error', 'Pengumuman tidak ditemukan');
+                console.error('❌ Announcement not found for update:', id);
+                showStatus('error', 'Pengumuman tidak ditemukan untuk diupdate');
                 return;
             }
         } else {
             // Add new
+            console.log('➕ Adding new announcement...');
             const newId = data.pengumuman.length > 0 ? 
                 Math.max(...data.pengumuman.map(p => p.id)) + 1 : 1;
             
-            data.pengumuman.push({
+            console.log('New ID generated:', newId);
+            
+            const newPengumuman = {
                 id: newId,
                 judul,
                 konten,
-                kategori,
-                lampiran: lampiran || null,
+                kategori: kategori || '',
+                lampiran: lampiran || '',
                 tanggal: new Date().toISOString()
-            });
+            };
+            
+            data.pengumuman.push(newPengumuman);
+            console.log('✅ New announcement added:', newPengumuman);
         }
         
-        // Save to GitHub
-        const success = await saveToGitHub('data.json', data, 
-            `${id ? 'Update' : 'Tambah'} pengumuman: ${judul}`);
+        // Save to GitHub - COBA DULU YANG SEDERHANA
+        console.log('💾 Saving to GitHub...');
+        const message = `${isUpdate ? 'Update' : 'Tambah'} pengumuman: ${judul}`;
         
-        if (success) {
-            showStatus('success', `Pengumuman berhasil ${id ? 'diupdate' : 'ditambahkan'}!`);
-            cancelPengumumanForm();
-            setTimeout(() => {
-                loadPengumumanList();
-                loadDashboard();
-            }, 1000);
-        } else {
-            showStatus('error', 'Gagal menyimpan pengumuman');
+        // Coba method sederhana dulu
+        console.log('🔄 Trying simple save method...');
+        const success = await simpleSaveToGitHub('data.json', data, message);
+        
+        if (!success) {
+            console.log('🔄 Trying advanced save method...');
+            const success2 = await saveToGitHub('data.json', data, message);
+            if (!success2) {
+                throw new Error('Both save methods failed');
+            }
         }
+        
+        console.log('✅ Save successful!');
+        showStatus('success', `Pengumuman berhasil ${isUpdate ? 'diupdate' : 'ditambahkan'}!`);
+        
+        // Reset form
+        cancelPengumumanForm();
+        
+        // Refresh data
+        setTimeout(() => {
+            console.log('🔄 Refreshing data...');
+            loadPengumumanList();
+            loadDashboard();
+        }, 1500);
         
     } catch (error) {
-        console.error('Error saving pengumuman:', error);
-        showStatus('error', 'Gagal menyimpan pengumuman');
+        console.error('❌ Error saving pengumuman:', error);
+        showStatus('error', `Gagal menyimpan: ${error.message}`);
     }
 }
 
@@ -598,7 +801,7 @@ async function deletePengumuman(id) {
         
         data.pengumuman = data.pengumuman.filter(p => p.id != id);
         
-        const success = await saveToGitHub('data.json', data, `Hapus pengumuman ID: ${id}`);
+        const success = await simpleSaveToGitHub('data.json', data, `Hapus pengumuman ID: ${id}`);
         
         if (success) {
             showStatus('success', 'Pengumuman berhasil dihapus!');
@@ -738,7 +941,7 @@ async function saveKuis() {
         }
         
         // Save to GitHub
-        const success = await saveToGitHub('data.json', data, 
+        const success = await simpleSaveToGitHub('data.json', data, 
             `${id ? 'Update' : 'Tambah'} soal kuis`);
         
         if (success) {
@@ -820,7 +1023,7 @@ async function deleteKuis(id) {
         
         data.kuis = data.kuis.filter(q => q.id != id);
         
-        const success = await saveToGitHub('data.json', data, `Hapus soal kuis ID: ${id}`);
+        const success = await simpleSaveToGitHub('data.json', data, `Hapus soal kuis ID: ${id}`);
         
         if (success) {
             showStatus('success', 'Soal berhasil dihapus!');
@@ -891,7 +1094,7 @@ async function restoreData() {
                     return;
                 }
                 
-                const success = await saveToGitHub('data.json', data, 'Restore data dari backup');
+                const success = await simpleSaveToGitHub('data.json', data, 'Restore data dari backup');
                 
                 if (success) {
                     showStatus('success', 'Restore berhasil!');
@@ -932,7 +1135,7 @@ async function resetData() {
             leaderboard: []
         };
         
-        const success = await saveToGitHub('data.json', defaultData, 'Reset semua data');
+        const success = await simpleSaveToGitHub('data.json', defaultData, 'Reset semua data');
         
         if (success) {
             showStatus('success', 'Data berhasil direset!');
@@ -952,84 +1155,6 @@ async function resetData() {
     } catch (error) {
         console.error('Error resetting data:', error);
         showStatus('error', 'Gagal mereset data');
-    }
-}
-
-// FUNGSI UTAMA: save to GitHub
-async function saveToGitHub(path, data, message) {
-    const token = localStorage.getItem('github_token');
-    if (!token) {
-        showStatus('error', 'GitHub Token tidak ditemukan');
-        return false;
-    }
-    
-    try {
-        console.log('Starting saveToGitHub:', { path, message, dataLength: JSON.stringify(data).length });
-        
-        // 1. Get current file SHA
-        let sha = null;
-        try {
-            const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            
-            if (getResponse.ok) {
-                const fileData = await getResponse.json();
-                sha = fileData.sha;
-                console.log('Got existing file SHA:', sha.substring(0, 20) + '...');
-            } else if (getResponse.status === 404) {
-                console.log('File does not exist yet, will create new');
-            } else {
-                const errorData = await getResponse.json();
-                console.error('Error getting file:', errorData);
-            }
-        } catch (e) {
-            console.log('Error getting file SHA, will create new file');
-        }
-        
-        // 2. Convert data to base64 (CARA YANG BENAR)
-        const jsonString = JSON.stringify(data, null, 2);
-        console.log('JSON string length:', jsonString.length);
-        
-        // Menggunakan cara yang lebih aman untuk base64 encoding
-        const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
-        console.log('Base64 content length:', base64Content.length);
-        
-        // 3. Upload to GitHub
-        const updateResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/vnd.github.v3+json'
-            },
-            body: JSON.stringify({
-                message: message,
-                content: base64Content,
-                sha: sha, // null jika file baru
-                branch: GITHUB_BRANCH
-            })
-        });
-        
-        const result = await updateResponse.json();
-        console.log('GitHub response:', result);
-        
-        if (updateResponse.ok) {
-            console.log('✅ Save successful!');
-            return true;
-        } else {
-            console.error('❌ GitHub error:', result.message);
-            showStatus('error', `GitHub: ${result.message}`);
-            return false;
-        }
-        
-    } catch (error) {
-        console.error('❌ Error saving to GitHub:', error);
-        showStatus('error', 'Gagal menyimpan ke GitHub');
-        return false;
     }
 }
 
@@ -1099,6 +1224,10 @@ function showStatus(type, message) {
     }
 }
 
+// ==============================
+// FUNGSI DEBUG & TESTING
+// ==============================
+
 // Fungsi debugging untuk mengecek token dan koneksi
 async function debugSystem() {
     console.log('=== DEBUG SYSTEM ===');
@@ -1112,7 +1241,7 @@ async function debugSystem() {
         try {
             const testResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `token ${token}`
                 }
             });
             console.log('GitHub repo access:', testResponse.status, testResponse.statusText);
@@ -1127,6 +1256,15 @@ async function debugSystem() {
             const dataResponse = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
             console.log('Data.json exists:', dataResponse.ok);
             
+            if (dataResponse.ok) {
+                const data = await dataResponse.json();
+                console.log('Current data structure:', {
+                    pengumuman: data.pengumuman?.length || 0,
+                    kuis: data.kuis?.length || 0,
+                    leaderboard: data.leaderboard?.length || 0
+                });
+            }
+            
         } catch (error) {
             console.error('Debug error:', error);
         }
@@ -1134,9 +1272,76 @@ async function debugSystem() {
     console.log('=== END DEBUG ===');
 }
 
-// Fungsi test untuk mengecek saveToGitHub
-async function testSave() {
-    console.log('=== TEST SAVE FUNCTION ===');
+// Fungsi untuk test langsung dari console
+async function testAddPengumuman() {
+    console.log('🧪 TEST: Adding test announcement');
+    
+    // Isi form dulu
+    document.getElementById('pengumuman-judul').value = 'TEST - ' + new Date().toLocaleTimeString();
+    document.getElementById('pengumuman-konten').value = 'Ini adalah konten test';
+    document.getElementById('pengumuman-kategori').value = 'Test';
+    document.getElementById('pengumuman-lampiran').value = '';
+    document.getElementById('pengumuman-id').value = '';
+    
+    // Simpan
+    await savePengumuman();
+}
+
+async function testLoadData() {
+    console.log('📥 TEST: Loading data');
+    try {
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Data loaded:', data);
+            console.log('Pengumuman count:', data.pengumuman?.length || 0);
+            console.log('Pengumuman list:', data.pengumuman || []);
+            return data;
+        } else {
+            console.error('❌ Failed to load data:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('❌ Error loading data:', error);
+        return null;
+    }
+}
+
+// Test token
+async function testToken() {
+    console.log('🔑 TEST: Checking token');
+    const token = localStorage.getItem('github_token');
+    if (!token) {
+        console.error('❌ No token found');
+        return false;
+    }
+    
+    console.log('Token found (first 10 chars):', token.substring(0, 10) + '...');
+    
+    try {
+        const response = await fetch(`https://api.github.com/user`, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            console.log('✅ Token valid for user:', user.login);
+            return true;
+        } else {
+            console.error('❌ Invalid token:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Token test error:', error);
+        return false;
+    }
+}
+
+// Test save function
+async function testSaveFunction() {
+    console.log('🧪 TEST: Testing save function');
     const testData = {
         pengumuman: [{
             id: 1,
@@ -1148,9 +1353,14 @@ async function testSave() {
         leaderboard: []
     };
     
-    const result = await saveToGitHub('test.json', testData, 'Test save function');
+    console.log('Testing simpleSaveToGitHub...');
+    const result = await simpleSaveToGitHub('test.json', testData, 'Test save function');
     console.log('Test result:', result);
 }
+
+// ==============================
+// INITIALIZE
+// ==============================
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -1251,5 +1461,20 @@ style.textContent = `
     tr:hover {
         background-color: #f5f5f5;
     }
+    
+    /* Responsive table */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
 `;
 document.head.appendChild(style);
+
+// Export fungsi testing ke window object agar bisa diakses dari console
+window.testAddPengumuman = testAddPengumuman;
+window.testLoadData = testLoadData;
+window.testToken = testToken;
+window.testSaveFunction = testSaveFunction;
+window.debugSystem = debugSystem;
