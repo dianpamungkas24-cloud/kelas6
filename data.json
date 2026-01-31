@@ -7,22 +7,6 @@
       "kategori": "Akademik",
       "lampiran": null,
       "tanggal": "2024-07-15T00:00:00.000Z"
-    },
-    {
-      "id": 2,
-      "judul": "Jadwal Ujian Tengah Semester",
-      "konten": "Ujian Tengah Semester akan dilaksanakan pada tanggal 15-20 September 2024. Persiapkan diri dengan belajar giat.",
-      "tanggal": "2024-08-20T00:00:00.000Z",
-      "kategori": "Ujian",
-      "lampiran": "https://example.com/jadwal-uts.pdf"
-    },
-    {
-      "id": 3,
-      "judul": "7 Kebiasaan Anak Indonesia Hebat",
-      "konten": "efsef",
-      "kategori": "er",
-      "lampiran": null,
-      "tanggal": "2026-01-31T12:15:29.006Z"
     }
   ],
   "kuis": [
