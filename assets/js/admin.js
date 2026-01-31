@@ -1,3 +1,4 @@
+// admin.js
 // Konfigurasi
 const GITHUB_USER = 'dianpamungkas24-cloud';
 const GITHUB_REPO = 'kelas6';
@@ -31,11 +32,13 @@ function login() {
     
     // Load data awal
     loadDashboard();
+    debugSystem(); // Debug info
 }
 
 // Fungsi untuk logout
 function logout() {
     localStorage.removeItem('admin_logged_in');
+    localStorage.removeItem('github_token');
     window.location.reload();
 }
 
@@ -45,6 +48,7 @@ function checkLogin() {
         document.getElementById('login-section').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         loadDashboard();
+        debugSystem();
     }
 }
 
@@ -87,7 +91,7 @@ function showSection(sectionId) {
 async function loadDashboard() {
     try {
         // Load data dari GitHub
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         // Update stats
@@ -114,6 +118,8 @@ async function loadDashboard() {
                 <strong>Status Sistem:</strong><br>
                 • GitHub API: ${token ? '✅ Terhubung' : '⚠️ Token tidak ditemukan'}<br>
                 • Total Data: ${Object.keys(data).length} jenis data<br>
+                • Total Pengumuman: ${data.pengumuman?.length || 0}<br>
+                • Total Kuis: ${data.kuis?.length || 0}<br>
                 • Terakhir Update: ${new Date().toLocaleString('id-ID')}
             </div>
         `;
@@ -152,7 +158,7 @@ async function uploadJadwal() {
             const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/jadwal/jadwal.jpg`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json'
                 },
@@ -232,7 +238,7 @@ async function uploadGaleri() {
             const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json'
                 },
@@ -254,6 +260,7 @@ async function uploadGaleri() {
         } catch (error) {
             console.error('Error uploading file:', error);
             errorCount++;
+            progressElement.innerHTML += `<div class="status status-error">❌ Error: ${file.name}</div>`;
         }
     }
     
@@ -267,7 +274,9 @@ async function uploadGaleri() {
     </div>`;
     
     // Reload galeri list
-    loadGaleriList();
+    setTimeout(() => {
+        loadGaleriList();
+    }, 1000);
 }
 
 // Fungsi untuk membaca file sebagai base64
@@ -285,11 +294,17 @@ function readFileAsBase64(file) {
 // Fungsi untuk load galeri list
 async function loadGaleriList() {
     try {
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/galeri?ref=${GITHUB_BRANCH}`);
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/galeri?ref=${GITHUB_BRANCH}&t=${Date.now()}`);
         const files = await response.json();
         
         const galeriList = document.getElementById('galeri-list');
         galeriList.innerHTML = '';
+        
+        // Jika folder kosong atau tidak ditemukan
+        if (!Array.isArray(files)) {
+            galeriList.innerHTML = '<p>Folder galeri kosong atau tidak ditemukan</p>';
+            return;
+        }
         
         const imageFiles = files.filter(file => 
             file.type === 'file' && 
@@ -298,17 +313,23 @@ async function loadGaleriList() {
              file.name.toLowerCase().endsWith('.png'))
         );
         
+        if (imageFiles.length === 0) {
+            galeriList.innerHTML = '<p>Belum ada foto di galeri</p>';
+            return;
+        }
+        
         imageFiles.forEach(file => {
             const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${file.path}`;
             
             const imgDiv = document.createElement('div');
+            imgDiv.className = 'galeri-item';
             imgDiv.innerHTML = `
                 <img src="${rawUrl}" 
                      alt="${file.name}" 
                      style="width: 100%; height: 100px; object-fit: cover; border-radius: 5px;">
-                <p style="font-size: 12px; margin: 5px 0; text-align: center;">${file.name}</p>
+                <p style="font-size: 12px; margin: 5px 0; text-align: center; word-break: break-all;">${file.name}</p>
                 <button onclick="deleteFoto('${file.path}', '${file.sha}')" 
-                        style="background: #e74c3c; color: white; border: none; padding: 5px; border-radius: 3px; width: 100%; cursor: pointer;">
+                        style="background: #e74c3c; color: white; border: none; padding: 5px; border-radius: 3px; width: 100%; cursor: pointer; font-size: 12px;">
                     Hapus
                 </button>
             `;
@@ -317,6 +338,7 @@ async function loadGaleriList() {
         
     } catch (error) {
         console.error('Error loading galeri list:', error);
+        document.getElementById('galeri-list').innerHTML = '<p>Gagal memuat daftar galeri</p>';
     }
 }
 
@@ -334,7 +356,7 @@ async function deleteFoto(path, sha) {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `token ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 'Accept': 'application/vnd.github.v3+json'
             },
@@ -347,9 +369,12 @@ async function deleteFoto(path, sha) {
         
         if (response.ok) {
             showStatus('success', 'Foto berhasil dihapus');
-            loadGaleriList();
+            setTimeout(() => {
+                loadGaleriList();
+            }, 1000);
         } else {
-            showStatus('error', 'Gagal menghapus foto');
+            const errorData = await response.json();
+            showStatus('error', `Gagal menghapus foto: ${errorData.message}`);
         }
         
     } catch (error) {
@@ -389,24 +414,33 @@ function showPengumumanForm(id = null) {
     }
     
     form.style.display = 'block';
+    form.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Fungsi untuk load pengumuman data
 async function loadPengumumanData(id) {
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
+        
+        if (!response.ok) {
+            throw new Error('Gagal memuat data');
+        }
+        
         const data = await response.json();
         
-        const pengumuman = data.pengumuman.find(p => p.id == id);
+        const pengumuman = data.pengumuman?.find(p => p.id == id);
         if (pengumuman) {
-            document.getElementById('pengumuman-judul').value = pengumuman.judul;
-            document.getElementById('pengumuman-konten').value = pengumuman.konten;
+            document.getElementById('pengumuman-judul').value = pengumuman.judul || '';
+            document.getElementById('pengumuman-konten').value = pengumuman.konten || '';
             document.getElementById('pengumuman-kategori').value = pengumuman.kategori || '';
             document.getElementById('pengumuman-lampiran').value = pengumuman.lampiran || '';
             document.getElementById('pengumuman-id').value = pengumuman.id;
+        } else {
+            showStatus('error', 'Data pengumuman tidak ditemukan');
         }
     } catch (error) {
         console.error('Error loading pengumuman data:', error);
+        showStatus('error', 'Gagal memuat data pengumuman');
     }
 }
 
@@ -425,8 +459,19 @@ async function savePengumuman() {
     
     try {
         // Load current data
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
-        const data = await response.json();
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
+        let data;
+        
+        if (response.ok) {
+            data = await response.json();
+        } else {
+            // Jika file tidak ada, buat yang baru
+            data = {
+                pengumuman: [],
+                kuis: [],
+                leaderboard: []
+            };
+        }
         
         if (!data.pengumuman) {
             data.pengumuman = [];
@@ -444,6 +489,9 @@ async function savePengumuman() {
                     lampiran: lampiran || null,
                     tanggal: data.pengumuman[index].tanggal // Keep original date
                 };
+            } else {
+                showStatus('error', 'Pengumuman tidak ditemukan');
+                return;
             }
         } else {
             // Add new
@@ -461,18 +509,16 @@ async function savePengumuman() {
         }
         
         // Save to GitHub
-        const token = localStorage.getItem('github_token');
-        let success = false;
-        
-        if (token) {
-            success = await saveToGitHub('data.json', data, 
-                `${id ? 'Update' : 'Tambah'} pengumuman: ${judul}`);
-        }
+        const success = await saveToGitHub('data.json', data, 
+            `${id ? 'Update' : 'Tambah'} pengumuman: ${judul}`);
         
         if (success) {
             showStatus('success', `Pengumuman berhasil ${id ? 'diupdate' : 'ditambahkan'}!`);
             cancelPengumumanForm();
-            loadPengumumanList();
+            setTimeout(() => {
+                loadPengumumanList();
+                loadDashboard();
+            }, 1000);
         } else {
             showStatus('error', 'Gagal menyimpan pengumuman');
         }
@@ -492,7 +538,7 @@ function cancelPengumumanForm() {
 // Fungsi untuk load pengumuman list
 async function loadPengumumanList() {
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         const container = document.getElementById('pengumuman-list');
@@ -500,6 +546,11 @@ async function loadPengumumanList() {
             container.innerHTML = '<p>Belum ada pengumuman</p>';
             return;
         }
+        
+        // Sort by date descending
+        const sortedPengumuman = [...data.pengumuman].sort((a, b) => 
+            new Date(b.tanggal) - new Date(a.tanggal)
+        );
         
         const html = `
             <table>
@@ -513,10 +564,10 @@ async function loadPengumumanList() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${data.pengumuman.map(p => `
+                    ${sortedPengumuman.map(p => `
                         <tr>
                             <td>${p.id}</td>
-                            <td>${p.judul}</td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${p.judul}</td>
                             <td>${new Date(p.tanggal).toLocaleDateString('id-ID')}</td>
                             <td>${p.kategori || '-'}</td>
                             <td>
@@ -542,21 +593,19 @@ async function deletePengumuman(id) {
     if (!confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) return;
     
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         data.pengumuman = data.pengumuman.filter(p => p.id != id);
         
-        const token = localStorage.getItem('github_token');
-        let success = false;
-        
-        if (token) {
-            success = await saveToGitHub('data.json', data, `Hapus pengumuman ID: ${id}`);
-        }
+        const success = await saveToGitHub('data.json', data, `Hapus pengumuman ID: ${id}`);
         
         if (success) {
             showStatus('success', 'Pengumuman berhasil dihapus!');
-            loadPengumumanList();
+            setTimeout(() => {
+                loadPengumumanList();
+                loadDashboard();
+            }, 1000);
         } else {
             showStatus('error', 'Gagal menghapus pengumuman');
         }
@@ -595,15 +644,16 @@ function showKuisForm(id = null) {
     }
     
     form.style.display = 'block';
+    form.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Fungsi untuk load kuis data
 async function loadKuisData(id) {
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
-        const kuis = data.kuis.find(q => q.id == id);
+        const kuis = data.kuis?.find(q => q.id == id);
         if (kuis) {
             document.getElementById('kuis-pertanyaan').value = kuis.pertanyaan;
             document.getElementById('pilihan1').value = kuis.pilihan[0];
@@ -638,10 +688,25 @@ async function saveKuis() {
         return;
     }
     
+    if (jawaban < 0 || jawaban > 3) {
+        showStatus('error', 'Jawaban benar harus antara 0-3');
+        return;
+    }
+    
     try {
         // Load current data
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
-        const data = await response.json();
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
+        let data;
+        
+        if (response.ok) {
+            data = await response.json();
+        } else {
+            data = {
+                pengumuman: [],
+                kuis: [],
+                leaderboard: []
+            };
+        }
         
         if (!data.kuis) {
             data.kuis = [];
@@ -661,6 +726,9 @@ async function saveKuis() {
             const index = data.kuis.findIndex(q => q.id == id);
             if (index !== -1) {
                 data.kuis[index] = { ...kuisData, id: parseInt(id) };
+            } else {
+                showStatus('error', 'Soal tidak ditemukan');
+                return;
             }
         } else {
             // Add new
@@ -670,18 +738,16 @@ async function saveKuis() {
         }
         
         // Save to GitHub
-        const token = localStorage.getItem('github_token');
-        let success = false;
-        
-        if (token) {
-            success = await saveToGitHub('data.json', data, 
-                `${id ? 'Update' : 'Tambah'} soal kuis`);
-        }
+        const success = await saveToGitHub('data.json', data, 
+            `${id ? 'Update' : 'Tambah'} soal kuis`);
         
         if (success) {
             showStatus('success', `Soal kuis berhasil ${id ? 'diupdate' : 'ditambahkan'}!`);
             cancelKuisForm();
-            loadKuisList();
+            setTimeout(() => {
+                loadKuisList();
+                loadDashboard();
+            }, 1000);
         } else {
             showStatus('error', 'Gagal menyimpan soal kuis');
         }
@@ -701,7 +767,7 @@ function cancelKuisForm() {
 // Fungsi untuk load kuis list
 async function loadKuisList() {
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         const container = document.getElementById('kuis-list');
@@ -724,7 +790,7 @@ async function loadKuisList() {
                     ${data.kuis.map(q => `
                         <tr>
                             <td>${q.id}</td>
-                            <td>${q.pertanyaan.substring(0, 50)}${q.pertanyaan.length > 50 ? '...' : ''}</td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${q.pertanyaan.substring(0, 50)}${q.pertanyaan.length > 50 ? '...' : ''}</td>
                             <td>${q.kategori || '-'}</td>
                             <td>
                                 <button class="action-btn edit-btn" onclick="showKuisForm(${q.id})">Edit</button>
@@ -749,21 +815,19 @@ async function deleteKuis(id) {
     if (!confirm('Apakah Anda yakin ingin menghapus soal ini?')) return;
     
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         data.kuis = data.kuis.filter(q => q.id != id);
         
-        const token = localStorage.getItem('github_token');
-        let success = false;
-        
-        if (token) {
-            success = await saveToGitHub('data.json', data, `Hapus soal kuis ID: ${id}`);
-        }
+        const success = await saveToGitHub('data.json', data, `Hapus soal kuis ID: ${id}`);
         
         if (success) {
             showStatus('success', 'Soal berhasil dihapus!');
-            loadKuisList();
+            setTimeout(() => {
+                loadKuisList();
+                loadDashboard();
+            }, 1000);
         } else {
             showStatus('error', 'Gagal menghapus soal');
         }
@@ -777,7 +841,7 @@ async function deleteKuis(id) {
 // Fungsi untuk backup data
 async function backupData() {
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
         const data = await response.json();
         
         // Create blob and download
@@ -818,39 +882,46 @@ async function restoreData() {
         reader.readAsText(file);
         
         reader.onload = async function(e) {
-            const data = JSON.parse(e.target.result);
-            
-            // Validasi struktur data
-            if (!data.kuis || !data.pengumuman) {
-                showStatus('error', 'Format file backup tidak valid');
-                return;
-            }
-            
-            const token = localStorage.getItem('github_token');
-            let success = false;
-            
-            if (token) {
-                success = await saveToGitHub('data.json', data, 'Restore data dari backup');
-            }
-            
-            if (success) {
-                showStatus('success', 'Restore berhasil!');
-                fileInput.value = '';
-                loadDashboard();
-            } else {
-                showStatus('error', 'Gagal melakukan restore');
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                // Validasi struktur data
+                if (!data.kuis || !data.pengumuman) {
+                    showStatus('error', 'Format file backup tidak valid');
+                    return;
+                }
+                
+                const success = await saveToGitHub('data.json', data, 'Restore data dari backup');
+                
+                if (success) {
+                    showStatus('success', 'Restore berhasil!');
+                    fileInput.value = '';
+                    setTimeout(() => {
+                        loadDashboard();
+                        loadPengumumanList();
+                        loadKuisList();
+                    }, 1000);
+                } else {
+                    showStatus('error', 'Gagal melakukan restore');
+                }
+            } catch (parseError) {
+                showStatus('error', 'File JSON tidak valid');
             }
         };
         
     } catch (error) {
         console.error('Error restoring data:', error);
-        showStatus('error', 'Gagal melakukan restore. Format file tidak valid.');
+        showStatus('error', 'Gagal melakukan restore');
     }
 }
 
 // Fungsi untuk reset data
 async function resetData() {
     if (!confirm('PERINGATAN: Ini akan menghapus SEMUA data. Lanjutkan?')) {
+        return;
+    }
+    
+    if (!confirm('YAKIN? Data yang dihapus tidak dapat dikembalikan!')) {
         return;
     }
     
@@ -861,22 +932,19 @@ async function resetData() {
             leaderboard: []
         };
         
-        const token = localStorage.getItem('github_token');
-        let success = false;
-        
-        if (token) {
-            success = await saveToGitHub('data.json', defaultData, 'Reset semua data');
-        }
+        const success = await saveToGitHub('data.json', defaultData, 'Reset semua data');
         
         if (success) {
             showStatus('success', 'Data berhasil direset!');
-            loadDashboard();
-            if (document.getElementById('pengumuman-section').classList.contains('active')) {
-                loadPengumumanList();
-            }
-            if (document.getElementById('kuis-section').classList.contains('active')) {
-                loadKuisList();
-            }
+            setTimeout(() => {
+                loadDashboard();
+                if (document.getElementById('pengumuman-section').classList.contains('active')) {
+                    loadPengumumanList();
+                }
+                if (document.getElementById('kuis-section').classList.contains('active')) {
+                    loadKuisList();
+                }
+            }, 1000);
         } else {
             showStatus('error', 'Gagal mereset data');
         }
@@ -887,7 +955,7 @@ async function resetData() {
     }
 }
 
-// Fungsi untuk save to GitHub
+// FUNGSI UTAMA: save to GitHub
 async function saveToGitHub(path, data, message) {
     const token = localStorage.getItem('github_token');
     if (!token) {
@@ -896,45 +964,71 @@ async function saveToGitHub(path, data, message) {
     }
     
     try {
+        console.log('Starting saveToGitHub:', { path, message, dataLength: JSON.stringify(data).length });
+        
         // 1. Get current file SHA
         let sha = null;
         try {
-            const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
+            const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`, {
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
                 }
             });
+            
             if (getResponse.ok) {
                 const fileData = await getResponse.json();
                 sha = fileData.sha;
+                console.log('Got existing file SHA:', sha.substring(0, 20) + '...');
+            } else if (getResponse.status === 404) {
+                console.log('File does not exist yet, will create new');
+            } else {
+                const errorData = await getResponse.json();
+                console.error('Error getting file:', errorData);
             }
         } catch (e) {
-            // File doesn't exist yet
+            console.log('Error getting file SHA, will create new file');
         }
         
-        // 2. Convert data to base64
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        // 2. Convert data to base64 (CARA YANG BENAR)
+        const jsonString = JSON.stringify(data, null, 2);
+        console.log('JSON string length:', jsonString.length);
+        
+        // Menggunakan cara yang lebih aman untuk base64 encoding
+        const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+        console.log('Base64 content length:', base64Content.length);
         
         // 3. Upload to GitHub
         const updateResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `token ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 'Accept': 'application/vnd.github.v3+json'
             },
             body: JSON.stringify({
                 message: message,
-                content: content,
-                sha: sha,
+                content: base64Content,
+                sha: sha, // null jika file baru
                 branch: GITHUB_BRANCH
             })
         });
         
-        return updateResponse.ok;
+        const result = await updateResponse.json();
+        console.log('GitHub response:', result);
+        
+        if (updateResponse.ok) {
+            console.log('✅ Save successful!');
+            return true;
+        } else {
+            console.error('❌ GitHub error:', result.message);
+            showStatus('error', `GitHub: ${result.message}`);
+            return false;
+        }
+        
     } catch (error) {
-        console.error('Error saving to GitHub:', error);
+        console.error('❌ Error saving to GitHub:', error);
+        showStatus('error', 'Gagal menyimpan ke GitHub');
         return false;
     }
 }
@@ -942,8 +1036,19 @@ async function saveToGitHub(path, data, message) {
 // Fungsi untuk get galeri stats
 async function getGaleriStats() {
     try {
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/galeri?ref=${GITHUB_BRANCH}`);
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/assets/image/galeri?ref=${GITHUB_BRANCH}&t=${Date.now()}`);
+        
+        if (!response.ok) {
+            return 0;
+        }
+        
         const files = await response.json();
+        
+        // Pastikan files adalah array
+        if (!Array.isArray(files)) {
+            return 0;
+        }
+        
         return files.filter(file => 
             file.type === 'file' && 
             (file.name.toLowerCase().endsWith('.jpg') || 
@@ -957,22 +1062,194 @@ async function getGaleriStats() {
 
 // Fungsi untuk menampilkan status
 function showStatus(type, message) {
-    const statusElement = document.getElementById(`${document.querySelector('.section.active').id.replace('-section', '')}-status`);
-    if (!statusElement) return;
+    // Cari section aktif
+    const activeSection = document.querySelector('.section.active');
+    if (!activeSection) {
+        // Fallback ke dashboard
+        const statusElement = document.getElementById('dashboard-status');
+        if (statusElement) {
+            statusElement.innerHTML = `
+                <div class="status status-${type}">
+                    ${type === 'success' ? '✅' : '❌'} ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                statusElement.innerHTML = '';
+            }, 5000);
+        }
+        return;
+    }
     
-    statusElement.innerHTML = `
-        <div class="status status-${type}">
-            ${type === 'success' ? '✅' : '❌'} ${message}
-        </div>
-    `;
+    const sectionId = activeSection.id.replace('-section', '');
+    const statusElement = document.getElementById(`${sectionId}-status`);
     
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-        statusElement.innerHTML = '';
-    }, 5000);
+    if (statusElement) {
+        statusElement.innerHTML = `
+            <div class="status status-${type}">
+                ${type === 'success' ? '✅' : '❌'} ${message}
+            </div>
+        `;
+        
+        // Auto-hide setelah 5 detik
+        setTimeout(() => {
+            if (statusElement) {
+                statusElement.innerHTML = '';
+            }
+        }, 5000);
+    }
+}
+
+// Fungsi debugging untuk mengecek token dan koneksi
+async function debugSystem() {
+    console.log('=== DEBUG SYSTEM ===');
+    console.log('Token exists:', !!localStorage.getItem('github_token'));
+    console.log('Token:', localStorage.getItem('github_token')?.substring(0, 10) + '...');
+    console.log('Logged in:', localStorage.getItem('admin_logged_in'));
+    
+    // Test GitHub API
+    const token = localStorage.getItem('github_token');
+    if (token) {
+        try {
+            const testResponse = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log('GitHub repo access:', testResponse.status, testResponse.statusText);
+            
+            if (testResponse.ok) {
+                const repoInfo = await testResponse.json();
+                console.log('Repository:', repoInfo.full_name);
+                console.log('Default branch:', repoInfo.default_branch);
+            }
+            
+            // Test read data.json
+            const dataResponse = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/data.json?t=${Date.now()}`);
+            console.log('Data.json exists:', dataResponse.ok);
+            
+        } catch (error) {
+            console.error('Debug error:', error);
+        }
+    }
+    console.log('=== END DEBUG ===');
+}
+
+// Fungsi test untuk mengecek saveToGitHub
+async function testSave() {
+    console.log('=== TEST SAVE FUNCTION ===');
+    const testData = {
+        pengumuman: [{
+            id: 1,
+            judul: "Test",
+            konten: "Test content",
+            tanggal: new Date().toISOString()
+        }],
+        kuis: [],
+        leaderboard: []
+    };
+    
+    const result = await saveToGitHub('test.json', testData, 'Test save function');
+    console.log('Test result:', result);
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     checkLogin();
+    
+    // Event listeners untuk enter key pada form login
+    document.getElementById('admin-password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
+    
+    document.getElementById('github-token').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
+    
+    // Auto-focus pada input password
+    if (document.getElementById('admin-password')) {
+        document.getElementById('admin-password').focus();
+    }
 });
+
+// Tambahkan CSS untuk status
+const style = document.createElement('style');
+style.textContent = `
+    .status {
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        font-weight: bold;
+    }
+    
+    .status-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .status-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .status-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    
+    .galeri-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin: 10px;
+        width: 150px;
+        display: inline-block;
+        vertical-align: top;
+    }
+    
+    .action-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin: 2px;
+    }
+    
+    .edit-btn {
+        background-color: #3498db;
+        color: white;
+    }
+    
+    .delete-btn {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+    
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+`;
+document.head.appendChild(style);
