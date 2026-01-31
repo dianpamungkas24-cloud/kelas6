@@ -2,11 +2,11 @@
   "pengumuman": [
     {
       "id": 1,
-      "judul": "Selamat Datang di Tahun Ajaran Baru",
-      "konten": "Selamat datang para siswa kelas 6 di tahun ajaran baru 2024/2025. Mari kita mulai dengan semangat belajar yang tinggi!",
-      "tanggal": "2024-07-15T00:00:00.000Z",
+      "judul": "7 Kebiasaan Anak Indonesia Hebat",
+      "konten": "Segera kirim foto 7 kebiasaan anak indonesia hebat paling lambat minggu, 1 februari 2026",
       "kategori": "Akademik",
-      "lampiran": null
+      "lampiran": null,
+      "tanggal": "2024-07-15T00:00:00.000Z"
     },
     {
       "id": 2,
@@ -15,14 +15,6 @@
       "tanggal": "2024-08-20T00:00:00.000Z",
       "kategori": "Ujian",
       "lampiran": "https://example.com/jadwal-uts.pdf"
-    },
-    {
-      "id": 3,
-      "judul": "7 Kebiasaan Anak Indonesia Hebat",
-      "konten": "Segera kirimkan foto 7 kebiasaan anak indonesia hebat sebelum minggu, 2 februari 2026",
-      "kategori": "Penting",
-      "lampiran": null,
-      "tanggal": "2026-01-31T11:10:16.801Z"
     }
   ],
   "kuis": [
