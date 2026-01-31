@@ -15,13 +15,26 @@
       "tanggal": "2024-08-20T00:00:00.000Z",
       "kategori": "Ujian",
       "lampiran": "https://example.com/jadwal-uts.pdf"
+    },
+    {
+      "id": 3,
+      "judul": "7 Kebiasaan Anak Indonesia Hebat",
+      "konten": "Segera kirimkan foto 7 kebiasaan anak indonesia hebat paling lambat minggu, 1 Februari 2025\n#penting #ayodong #uhuy",
+      "kategori": "penting",
+      "lampiran": null,
+      "tanggal": "2026-01-31T11:09:06.116Z"
     }
   ],
   "kuis": [
     {
       "id": 1,
       "pertanyaan": "Ibukota Indonesia adalah?",
-      "pilihan": ["Jakarta", "Bandung", "Surabaya", "Medan"],
+      "pilihan": [
+        "Jakarta",
+        "Bandung",
+        "Surabaya",
+        "Medan"
+      ],
       "jawaban": 0,
       "penjelasan": "Jakarta adalah ibukota negara Indonesia sejak tahun 1945",
       "kategori": "Pengetahuan Umum",
@@ -30,7 +43,12 @@
     {
       "id": 2,
       "pertanyaan": "Berapakah hasil dari 25 × 4?",
-      "pilihan": ["80", "90", "100", "110"],
+      "pilihan": [
+        "80",
+        "90",
+        "100",
+        "110"
+      ],
       "jawaban": 2,
       "penjelasan": "25 × 4 = 100",
       "kategori": "Matematika",
@@ -39,7 +57,12 @@
     {
       "id": 3,
       "pertanyaan": "Planet terdekat dari Matahari adalah?",
-      "pilihan": ["Bumi", "Mars", "Venus", "Merkurius"],
+      "pilihan": [
+        "Bumi",
+        "Mars",
+        "Venus",
+        "Merkurius"
+      ],
       "jawaban": 3,
       "penjelasan": "Merkurius adalah planet terdekat dari Matahari dalam tata surya kita",
       "kategori": "IPA",
