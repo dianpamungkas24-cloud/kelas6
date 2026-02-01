@@ -3,10 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman - Portal Kelas 6</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Pengumuman - Kelas 6</title>
     <link rel="icon" href="../assets/image/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --transition: all 0.3s ease;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,891 +34,1017 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--dark);
+            line-height: 1.5;
+            font-size: 14px;
         }
         
-        .container {
-            max-width: 1000px;
+        /* Hero Background */
+        .hero-section {
+            position: relative;
+            min-height: 200px;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        var(--hero-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+            background-size: cover;
+            background-position: center;
+            padding: 1.5rem 1rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Compact Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .header {
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+        }
+        
+        .nav-link {
+            padding: 0.5rem 0.75rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Hero Content */
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
             text-align: center;
-            padding: 30px 20px;
-            background: white;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+        .hero-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
         
-        .header p {
-            color: #7f8c8d;
-            font-size: 1.1em;
+        .hero-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
         }
         
         .back-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #3498db;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.3s;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .back-btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.3);
         }
         
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: white;
-            font-size: 18px;
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
         }
         
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
+        /* Compact Stats */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .error-container {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 25px;
+        .stat-item {
+            background: white;
+            padding: 1rem;
             border-radius: 10px;
             text-align: center;
-            margin: 20px 0;
-            border: 2px solid #f5c6cb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-200);
         }
         
-        .refresh-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 25px;
-            background: #e74c3c;
-            color: white;
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+        
+        /* Control Bar */
+        .control-bar {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+        
+        .filter-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tag {
+            padding: 0.5rem 0.75rem;
+            background: var(--gray-100);
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 0.8rem;
             cursor: pointer;
-            font-size: 15px;
-            transition: all 0.3s;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
         
-        .refresh-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
+        .filter-tag:hover {
+            background: var(--gray-200);
         }
         
-        .pengumuman-list {
+        .filter-tag.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Compact Pengumuman Grid */
+        .pengumuman-grid {
             display: grid;
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
         
         .pengumuman-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border-left: 5px solid #3498db;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
         
         .pengumuman-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary-light);
         }
         
-        .pengumuman-card.penting {
-            border-left-color: #e74c3c;
-            background: linear-gradient(to right, #fff5f5, white);
+        .card-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
-        .pengumuman-card.akademik {
-            border-left-color: #2ecc71;
-            background: linear-gradient(to right, #f0fff4, white);
+        .badge-new {
+            background: var(--success);
+            color: white;
         }
         
-        .pengumuman-card.proyek {
-            border-left-color: #9b59b6;
-            background: linear-gradient(to right, #f9f0ff, white);
+        .badge-penting {
+            background: var(--danger);
+            color: white;
         }
         
-        .pengumuman-card.umum {
-            border-left-color: #f39c12;
-            background: linear-gradient(to right, #fff9e6, white);
+        .card-header {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
         }
         
-        .pengumuman-header {
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .card-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f2f2f2;
-        }
-        
-        .pengumuman-title {
-            font-size: 1.4em;
-            color: #2c3e50;
-            margin-right: 15px;
-            flex: 1;
-        }
-        
-        .pengumuman-meta {
-            display: flex;
-            gap: 15px;
+            gap: 0.75rem;
+            align-items: center;
             flex-wrap: wrap;
         }
         
-        .pengumuman-date {
-            background: #e8f4fc;
-            color: #3498db;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
+        .meta-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.25rem;
+            color: var(--gray-500);
+            font-size: 0.75rem;
         }
         
-        .pengumuman-category {
-            background: #f0f0f0;
-            color: #7f8c8d;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .card-content {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            max-height: 80px;
+            overflow: hidden;
+            position: relative;
         }
         
-        .pengumuman-content {
-            color: #444;
-            font-size: 1.05em;
-            line-height: 1.7;
-            margin-bottom: 20px;
+        .card-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, white);
         }
         
-        .pengumuman-content p {
-            margin-bottom: 15px;
-        }
-        
-        .pengumuman-attachment {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        .attachment-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 15px;
-            background: #e8f4fc;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        .attachment-link:hover {
-            background: #d1e8ff;
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.2);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-        
-        .empty-state-icon {
-            font-size: 80px;
-            color: #ddd;
-            margin-bottom: 20px;
-            display: block;
-        }
-        
-        .empty-state h3 {
-            color: #7f8c8d;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-        
-        .empty-state p {
-            color: #95a5a6;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
-        .stats-bar {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
         
-        .stat-item {
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .attachment-link {
+            padding: 0.4rem 0.75rem;
+            background: var(--gray-100);
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .attachment-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Loading */
+        .loading-container {
             text-align: center;
-            flex: 1;
+            padding: 3rem;
         }
         
-        .stat-number {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #3498db;
-            display: block;
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
         }
         
-        .stat-label {
-            font-size: 0.9em;
-            color: #7f8c8d;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* Footer */
         .footer {
             text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: white;
-            font-size: 0.9em;
-            opacity: 0.8;
+            padding: 1.5rem;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 2rem;
         }
         
         .update-time {
-            font-size: 0.8em;
-            color: rgba(255,255,255,0.7);
-            margin-top: 5px;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gray-400);
         }
         
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
+        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .header {
-                padding: 20px 15px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .pengumuman-card {
-                padding: 20px;
-            }
-            
-            .pengumuman-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .pengumuman-meta {
-                width: 100%;
-            }
-            
             .stats-bar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pengumuman-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 1.25rem;
             }
         }
         
         @media (max-width: 480px) {
-            .pengumuman-title {
-                font-size: 1.2em;
+            .hero-section {
+                min-height: 150px;
+                padding: 1rem;
             }
             
-            .pengumuman-content {
-                font-size: 1em;
+            .stat-item {
+                padding: 0.75rem;
             }
             
-            .header h1 {
-                font-size: 1.7em;
+            .stat-number {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header fade-in">
-            <h1>📢 Pengumuman Kelas 6</h1>
-            <p>Informasi terbaru dan pengumuman penting</p>
-            <a href="../index.html" class="back-btn">🏠 Kembali ke Beranda</a>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-school"></i>
+                </div>
+                <span>Kelas 6</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link"><i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="#" class="nav-link active"><i class="fas fa-bullhorn"></i> Pengumuman</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt nav-link"></i> Jadwal</a></li>
+                <li><a href="#"><i class="fas fa-book nav-link"></i> Materi</a></li>
+            </ul>
         </div>
-        
-        <!-- Loading State -->
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>Memuat pengumuman...</p>
+    </nav>
+
+    <!-- Hero Section dengan Background dari GitHub -->
+    <section class="hero-section" id="heroSection">
+        <div class="hero-content">
+            <h1 class="hero-title">📢 Pengumuman Kelas 6</h1>
+            <p class="hero-subtitle">Informasi terkini dan pengumuman penting untuk siswa</p>
+            <a href="../index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Beranda
+            </a>
         </div>
-        
-        <!-- Error Container -->
-        <div id="error-container" style="display: none;"></div>
-        
-        <!-- Stats Bar -->
-        <div id="stats-bar" class="stats-bar" style="display: none;">
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Stats -->
+        <div class="stats-bar fade-in" id="statsBar" style="display: none;">
             <div class="stat-item">
-                <span class="stat-number" id="total-pengumuman">0</span>
-                <span class="stat-label">Total Pengumuman</span>
+                <span class="stat-number" id="totalPengumuman">0</span>
+                <span class="stat-label">Total</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number" id="pengumuman-hari-ini">0</span>
+                <span class="stat-number" id="pengumumanHariIni">0</span>
                 <span class="stat-label">Hari Ini</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number" id="pengumuman-penting">0</span>
+                <span class="stat-number" id="pengumumanPenting">0</span>
                 <span class="stat-label">Penting</span>
             </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalKategori">0</span>
+                <span class="stat-label">Kategori</span>
+            </div>
         </div>
-        
-        <!-- Content Container -->
-        <div id="pengumuman-container" style="display: none;">
-            <div class="pengumuman-list" id="pengumuman-list"></div>
+
+        <!-- Control Bar -->
+        <div class="control-bar fade-in">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Cari pengumuman...">
+            </div>
+            
+            <div class="filter-tags">
+                <button class="filter-tag active" data-filter="all">
+                    <i class="fas fa-list"></i> Semua
+                </button>
+                <button class="filter-tag" data-filter="penting">
+                    <i class="fas fa-exclamation-circle"></i> Penting
+                </button>
+                <button class="filter-tag" data-filter="akademik">
+                    <i class="fas fa-book"></i> Akademik
+                </button>
+                <button class="filter-tag" data-filter="proyek">
+                    <i class="fas fa-project-diagram"></i> Proyek
+                </button>
+                <button class="filter-tag" data-filter="umum">
+                    <i class="fas fa-info-circle"></i> Umum
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading-container">
+            <div class="loader"></div>
+            <p>Memuat pengumuman...</p>
+        </div>
+
+        <!-- Error -->
+        <div id="errorContainer" style="display: none;"></div>
+
+        <!-- Pengumuman Grid -->
+        <div id="pengumumanContainer" style="display: none;">
+            <div class="pengumuman-grid" id="pengumumanGrid"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" style="display: none;" class="empty-state fade-in">
+                <i class="fas fa-inbox" style="font-size: 2rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--gray-500); margin-bottom: 0.5rem;">Belum Ada Pengumuman</h3>
+                <p style="color: var(--gray-400); font-size: 0.875rem;">Tidak ada pengumuman yang tersedia saat ini.</p>
+            </div>
         </div>
     </div>
-    
-    <div class="footer">
+
+    <!-- Footer -->
+    <footer class="footer">
         <p>© 2024 Portal Kelas 6 | SDN Contoh</p>
-        <p class="update-time">Terakhir diperbarui: <span id="last-updated">-</span></p>
+        <p class="update-time">
+            <i class="fas fa-clock"></i>
+            Terakhir diperbarui: <span id="lastUpdated">-</span>
+        </p>
+    </footer>
+
+    <!-- Modal untuk Detail -->
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 1rem;">
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative;">
+            <button id="modalClose" style="position: absolute; top: 0.75rem; right: 0.75rem; background: none; border: none; font-size: 1.25rem; color: var(--gray-500); cursor: pointer;">×</button>
+            <div id="modalContent"></div>
+        </div>
     </div>
-    
+
     <script>
         // ==============================
         // KONFIGURASI
         // ==============================
-        const GITHUB_USER = 'dianpamungkas24-cloud';
-        const GITHUB_REPO = 'kelas6';
-        const GITHUB_BRANCH = 'main';
-        const DATA_FILE = 'data.json';
-        
-        console.log('🚀 Pengumuman Page Loaded');
-        console.log(`📡 Konfigurasi: ${GITHUB_USER}/${GITHUB_REPO}/${DATA_FILE}`);
-        
+        const CONFIG = {
+            GITHUB_USER: 'dianpamungkas24-cloud',
+            GITHUB_REPO: 'kelas6',
+            GITHUB_BRANCH: 'main',
+            DATA_FILE: 'data.json',
+            BACKGROUND_FILE: 'background.jpg' // File background di GitHub
+        };
+
+        // State
+        let pengumuman = [];
+        let filteredPengumuman = [];
+        let activeFilter = 'all';
+        let searchQuery = '';
+
+        // DOM Elements
+        const elements = {
+            loading: document.getElementById('loading'),
+            errorContainer: document.getElementById('errorContainer'),
+            pengumumanContainer: document.getElementById('pengumumanContainer'),
+            pengumumanGrid: document.getElementById('pengumumanGrid'),
+            statsBar: document.getElementById('statsBar'),
+            emptyState: document.getElementById('emptyState'),
+            searchInput: document.getElementById('searchInput'),
+            modal: document.getElementById('modal'),
+            modalContent: document.getElementById('modalContent'),
+            modalClose: document.getElementById('modalClose'),
+            heroSection: document.getElementById('heroSection')
+        };
+
         // ==============================
-        // FUNGSI UTILITAS
+        // LOAD BACKGROUND DARI GITHUB
         // ==============================
-        
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('pengumuman-container').style.display = 'none';
-            document.getElementById('error-container').style.display = 'none';
-            document.getElementById('stats-bar').style.display = 'none';
-        }
-        
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-        
-        function showError(message, details = '') {
-            hideLoading();
-            document.getElementById('pengumuman-container').style.display = 'none';
-            document.getElementById('stats-bar').style.display = 'none';
-            
-            const errorContainer = document.getElementById('error-container');
-            errorContainer.style.display = 'block';
-            errorContainer.innerHTML = `
-                <div class="error-container">
-                    <h3 style="margin-bottom: 10px;">❌ Gagal Memuat Pengumuman</h3>
-                    <p style="margin-bottom: 10px;">${message}</p>
-                    ${details ? `<p style="font-size: 14px; color: #856404;">${details}</p>` : ''}
-                    <button onclick="loadPengumumanData()" class="refresh-btn">
-                        🔄 Muat Ulang Data
-                    </button>
-                    <div style="margin-top: 15px; font-size: 14px; color: #666;">
-                        <p>URL data: 
-                            <code style="background: #eee; padding: 2px 5px; border-radius: 3px;">
-                                https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${DATA_FILE}
-                            </code>
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            console.error('Error loading pengumuman:', message, details);
-        }
-        
-        function showContent() {
-            hideLoading();
-            document.getElementById('error-container').style.display = 'none';
-            document.getElementById('pengumuman-container').style.display = 'block';
-            document.getElementById('stats-bar').style.display = 'flex';
-        }
-        
-        function formatTanggal(dateString) {
+        async function loadBackground() {
             try {
-                const date = new Date(dateString);
+                // Coba load background dari GitHub
+                const bgUrl = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${CONFIG.BACKGROUND_FILE}`;
                 
-                if (isNaN(date.getTime())) {
-                    return 'Tanggal tidak valid';
-                }
+                // Cek apakah file ada
+                const response = await fetch(bgUrl, { method: 'HEAD' });
                 
-                const sekarang = new Date();
-                const bedaWaktu = sekarang - date;
-                const bedaHari = Math.floor(bedaWaktu / (1000 * 60 * 60 * 24));
-                
-                if (bedaHari === 0) return 'Hari ini';
-                else if (bedaHari === 1) return 'Kemarin';
-                else if (bedaHari < 7) return `${bedaHari} hari lalu`;
-                else {
-                    return date.toLocaleDateString('id-ID', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
+                if (response.ok) {
+                    // Jika file ada, set sebagai background
+                    elements.heroSection.style.setProperty('--hero-bg', `url('${bgUrl}')`);
+                    console.log('✅ Background loaded from GitHub');
+                } else {
+                    // Jika tidak ada, gunakan default gradient
+                    elements.heroSection.style.setProperty('--hero-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                    console.log('ℹ️ Using default background');
                 }
             } catch (error) {
-                console.error('Format tanggal error:', error);
-                return 'Tanggal tidak valid';
+                console.log('⚠️ Using default background (error loading)');
+                elements.heroSection.style.setProperty('--hero-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
             }
         }
-        
-        function formatWaktu(dateString) {
+
+        // ==============================
+        // UTILITY FUNCTIONS
+        // ==============================
+        function showLoading() {
+            elements.loading.style.display = 'block';
+            elements.pengumumanContainer.style.display = 'none';
+            elements.errorContainer.style.display = 'none';
+            elements.statsBar.style.display = 'none';
+        }
+
+        function hideLoading() {
+            elements.loading.style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            elements.pengumumanContainer.style.display = 'none';
+            elements.statsBar.style.display = 'none';
+            
+            elements.errorContainer.style.display = 'block';
+            elements.errorContainer.innerHTML = `
+                <div class="empty-state" style="border: 2px solid #fee; background: #fef2f2;">
+                    <i class="fas fa-exclamation-triangle" style="color: #dc2626; font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #dc2626; margin-bottom: 0.5rem;">Gagal Memuat Data</h3>
+                    <p style="color: #7c2d12; margin-bottom: 1rem;">${message}</p>
+                    <button onclick="loadData()" style="padding: 0.5rem 1rem; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">
+                        <i class="fas fa-redo"></i> Coba Lagi
+                    </button>
+                </div>
+            `;
+        }
+
+        function showContent() {
+            hideLoading();
+            elements.errorContainer.style.display = 'none';
+            elements.pengumumanContainer.style.display = 'block';
+            elements.statsBar.style.display = 'grid';
+        }
+
+        function formatDate(dateString) {
             try {
                 const date = new Date(dateString);
-                if (isNaN(date.getTime())) return '';
+                const now = new Date();
+                const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
                 
+                if (diffDays === 0) return 'Hari ini';
+                if (diffDays === 1) return 'Kemarin';
+                if (diffDays < 7) return `${diffDays} hari lalu`;
+                
+                return date.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short'
+                });
+            } catch {
+                return '';
+            }
+        }
+
+        function formatTime(dateString) {
+            try {
+                const date = new Date(dateString);
                 return date.toLocaleTimeString('id-ID', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-            } catch (error) {
+            } catch {
                 return '';
             }
         }
-        
-        function getKategoriClass(kategori) {
-            if (!kategori) return 'umum';
+
+        function getCategoryInfo(kategori) {
+            if (!kategori) return { class: 'umum', icon: 'fas fa-info-circle' };
             
             const kat = kategori.toLowerCase();
-            if (kat.includes('penting')) return 'penting';
-            if (kat.includes('akademik')) return 'akademik';
-            if (kat.includes('proyek')) return 'proyek';
-            if (kat.includes('tugas')) return 'akademik';
-            if (kat.includes('ujian')) return 'akademik';
-            return 'umum';
+            if (kat.includes('penting')) return { class: 'penting', icon: 'fas fa-exclamation-circle' };
+            if (kat.includes('akademik') || kat.includes('tugas') || kat.includes('ujian')) 
+                return { class: 'akademik', icon: 'fas fa-book' };
+            if (kat.includes('proyek')) return { class: 'proyek', icon: 'fas fa-project-diagram' };
+            return { class: 'umum', icon: 'fas fa-info-circle' };
         }
-        
-        function getKategoriIcon(kategori) {
-            if (!kategori) return '📌';
+
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayCount = pengumuman.filter(p => 
+                new Date(p.tanggal).toDateString() === today
+            ).length;
             
-            const kat = kategori.toLowerCase();
-            if (kat.includes('penting')) return '⚠️';
-            if (kat.includes('akademik')) return '📚';
-            if (kat.includes('proyek')) return '🎯';
-            if (kat.includes('tugas')) return '📝';
-            if (kat.includes('ujian')) return '✏️';
-            return '📌';
+            const pentingCount = pengumuman.filter(p => 
+                getCategoryInfo(p.kategori).class === 'penting'
+            ).length;
+            
+            const categories = new Set(
+                pengumuman.map(p => getCategoryInfo(p.kategori).class)
+            ).size;
+            
+            document.getElementById('totalPengumuman').textContent = pengumuman.length;
+            document.getElementById('pengumumanHariIni').textContent = todayCount;
+            document.getElementById('pengumumanPenting').textContent = pentingCount;
+            document.getElementById('totalKategori').textContent = categories;
         }
-        
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = 
+                now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                });
+        }
+
         // ==============================
-        // FUNGSI LOAD DATA
+        // FILTER & RENDER
         // ==============================
-        
-        async function loadPengumumanData() {
-            console.log('📥 Memuat data pengumuman...');
-            showLoading();
+        function filterPengumuman() {
+            let filtered = [...pengumuman];
             
-            try {
-                // URL data.json di GitHub
-                const dataUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${DATA_FILE}`;
-                const cacheBusterUrl = `${dataUrl}?t=${Date.now()}`;
-                
-                console.log(`🔗 Mengambil data dari: ${dataUrl}`);
-                
-                let response = await fetch(cacheBusterUrl);
-                
-                if (!response.ok) {
-                    console.log('🔄 Mencoba tanpa cache buster...');
-                    response = await fetch(dataUrl);
-                }
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                console.log('✅ Data berhasil diambil');
-                
-                // Validasi data
-                if (!data || typeof data !== 'object') {
-                    throw new Error('Format data tidak valid');
-                }
-                
-                if (!Array.isArray(data.pengumuman)) {
-                    console.warn('⚠️ Data pengumuman bukan array');
-                    data.pengumuman = [];
-                }
-                
-                console.log(`📊 Ditemukan ${data.pengumuman.length} pengumuman`);
-                
-                // Tampilkan data
-                displayPengumuman(data.pengumuman);
-                updateStats(data.pengumuman);
-                updateLastUpdated();
-                
-            } catch (error) {
-                console.error('❌ Error loading data:', error);
-                
-                // Cek koneksi
-                try {
-                    const testUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`;
-                    const testResponse = await fetch(testUrl);
-                    
-                    if (testResponse.ok) {
-                        showError(
-                            'Data pengumuman tidak ditemukan',
-                            'File data.json mungkin kosong atau belum ada pengumuman. Tambahkan melalui admin panel.'
-                        );
-                    } else {
-                        showError(
-                            'Repository tidak ditemukan',
-                            `Repository ${GITHUB_USER}/${GITHUB_REPO} tidak ditemukan.`
-                        );
-                    }
-                } catch (testError) {
-                    showError(
-                        'Gagal terhubung ke GitHub',
-                        `Error: ${error.message}. Periksa koneksi internet.`
-                    );
-                }
+            // Filter by search
+            if (searchQuery) {
+                filtered = filtered.filter(p => 
+                    (p.judul || '').toLowerCase().includes(searchQuery) ||
+                    (p.konten || '').toLowerCase().includes(searchQuery) ||
+                    (p.kategori || '').toLowerCase().includes(searchQuery)
+                );
             }
+            
+            // Filter by category
+            if (activeFilter !== 'all') {
+                filtered = filtered.filter(p => {
+                    const category = getCategoryInfo(p.kategori);
+                    return category.class === activeFilter;
+                });
+            }
+            
+            // Sort by date (newest first)
+            filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            filteredPengumuman = filtered;
+            return filtered;
         }
-        
-        function displayPengumuman(pengumumanList) {
-            console.log('🎨 Menampilkan pengumuman...');
-            
-            const container = document.getElementById('pengumuman-list');
-            
-            if (!pengumumanList || pengumumanList.length === 0) {
-                showEmptyState();
+
+        function renderPengumuman() {
+            if (filteredPengumuman.length === 0) {
+                elements.emptyState.style.display = 'block';
+                elements.pengumumanGrid.innerHTML = '';
                 return;
             }
             
-            // Urutkan dari terbaru
-            const sortedPengumuman = [...pengumumanList].sort((a, b) => {
-                const dateA = new Date(a.tanggal || Date.now());
-                const dateB = new Date(b.tanggal || Date.now());
-                return dateB - dateA;
-            });
+            elements.emptyState.style.display = 'none';
             
-            container.innerHTML = '';
+            const cardsHTML = filteredPengumuman.map((p, index) => {
+                const category = getCategoryInfo(p.kategori);
+                const isNew = new Date(p.tanggal) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+                const truncatedContent = p.konten.length > 100 ? p.konten.substring(0, 100) + '...' : p.konten;
+                
+                return `
+                    <div class="pengumuman-card fade-in" style="animation-delay: ${index * 0.05}s">
+                        ${isNew ? '<div class="card-badge badge-new">BARU</div>' : ''}
+                        ${category.class === 'penting' ? '<div class="card-badge badge-penting">PENTING</div>' : ''}
+                        
+                        <div class="card-header">
+                            <h3 class="card-title">${p.judul || 'Tanpa Judul'}</h3>
+                            <div class="card-meta">
+                                <span class="meta-item">
+                                    <i class="far fa-calendar"></i>
+                                    ${formatDate(p.tanggal)}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="far fa-clock"></i>
+                                    ${formatTime(p.tanggal)}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="${category.icon}"></i>
+                                    ${p.kategori || 'Umum'}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-content">
+                            ${truncatedContent.replace(/\n/g, '<br>')}
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-actions">
+                                <button class="action-btn" onclick="viewDetail(${p.id})" title="Lihat Detail">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" onclick="sharePengumuman(${p.id})" title="Bagikan">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                            
+                            ${p.lampiran ? `
+                            <a href="${p.lampiran}" target="_blank" class="attachment-link">
+                                <i class="fas fa-paperclip"></i> Lampiran
+                            </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
             
-            sortedPengumuman.forEach((p, index) => {
-                const card = createPengumumanCard(p, index);
-                container.appendChild(card);
-            });
-            
-            showContent();
-            console.log(`✅ Menampilkan ${sortedPengumuman.length} pengumuman`);
+            elements.pengumumanGrid.innerHTML = cardsHTML;
         }
-        
-        function createPengumumanCard(pengumuman, index) {
-            const card = document.createElement('div');
+
+        function viewDetail(id) {
+            const p = pengumuman.find(item => item.id == id);
+            if (!p) return;
             
-            const id = pengumuman.id || index + 1;
-            const judul = pengumuman.judul || 'Tanpa Judul';
-            const konten = pengumuman.konten || '';
-            const kategori = pengumuman.kategori || '';
-            const lampiran = pengumuman.lampiran || '';
-            const tanggal = pengumuman.tanggal || new Date().toISOString();
+            const category = getCategoryInfo(p.kategori);
             
-            const formattedDate = formatTanggal(tanggal);
-            const waktu = formatWaktu(tanggal);
-            const kategoriClass = getKategoriClass(kategori);
-            const kategoriIcon = getKategoriIcon(kategori);
-            
-            let formattedKonten = konten
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            const idBadge = id ? `<span style="font-size: 0.8em; color: #7f8c8d; background: #f2f2f2; padding: 2px 8px; border-radius: 10px;">ID: ${id}</span>` : '';
-            
-            card.className = `pengumuman-card ${kategoriClass} fade-in`;
-            card.style.animationDelay = `${index * 0.1}s`;
-            
-            card.innerHTML = `
-                <div class="pengumuman-header">
-                    <div style="flex: 1;">
-                        <h2 class="pengumuman-title">${judul}</h2>
-                        ${idBadge}
-                    </div>
-                    <div class="pengumuman-meta">
-                        <span class="pengumuman-date">
-                            📅 ${formattedDate} ${waktu ? `⏰ ${waktu}` : ''}
+            elements.modalContent.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem;">${p.judul}</h3>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: var(--gray-100); border-radius: 4px; font-size: 0.75rem; color: var(--gray-700);">
+                            <i class="far fa-calendar"></i> ${formatDate(p.tanggal)} ${formatTime(p.tanggal)}
                         </span>
-                        ${kategori ? `
-                        <span class="pengumuman-category">
-                            ${kategoriIcon} ${kategori}
+                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: var(--primary); color: white; border-radius: 4px; font-size: 0.75rem;">
+                            <i class="${category.icon}"></i> ${p.kategori || 'Umum'}
                         </span>
-                        ` : ''}
                     </div>
                 </div>
                 
-                <div class="pengumuman-content">
-                    ${formattedKonten}
+                <div style="font-size: 0.875rem; line-height: 1.6; color: var(--gray-700); margin-bottom: 1.5rem;">
+                    ${p.konten.replace(/\n/g, '<br>')}
                 </div>
                 
-                ${lampiran ? `
-                <div class="pengumuman-attachment">
-                    <a href="${lampiran}" target="_blank" class="attachment-link">
-                        📎 Buka Lampiran
+                ${p.lampiran ? `
+                <div>
+                    <a href="${p.lampiran}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--primary); color: white; text-decoration: none; border-radius: 6px; font-size: 0.875rem;">
+                        <i class="fas fa-paperclip"></i> Buka Lampiran
                     </a>
                 </div>
                 ` : ''}
             `;
             
-            return card;
+            elements.modal.style.display = 'flex';
         }
-        
-        function showEmptyState() {
-            showContent();
+
+        function sharePengumuman(id) {
+            const p = pengumuman.find(item => item.id == id);
+            if (!p) return;
             
-            const container = document.getElementById('pengumuman-list');
-            container.innerHTML = `
-                <div class="empty-state fade-in">
-                    <div class="empty-state-icon">📭</div>
-                    <h3>Belum Ada Pengumuman</h3>
-                    <p>Belum ada pengumuman yang tersedia saat ini.</p>
-                    <div style="margin-top: 20px;">
-                        <button onclick="loadPengumumanData()" class="refresh-btn">
-                            🔄 Periksa Kembali
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            console.log('📭 Tidak ada pengumuman ditemukan');
-        }
-        
-        function updateStats(pengumumanList) {
-            if (!pengumumanList || pengumumanList.length === 0) {
-                document.getElementById('total-pengumuman').textContent = '0';
-                document.getElementById('pengumuman-hari-ini').textContent = '0';
-                document.getElementById('pengumuman-penting').textContent = '0';
-                return;
-            }
-            
-            const today = new Date().toDateString();
-            const pengumumanHariIni = pengumumanList.filter(p => {
-                const pengumumanDate = new Date(p.tanggal).toDateString();
-                return pengumumanDate === today;
-            }).length;
-            
-            const pengumumanPenting = pengumumanList.filter(p => {
-                const kategori = (p.kategori || '').toLowerCase();
-                return kategori.includes('penting');
-            }).length;
-            
-            document.getElementById('total-pengumuman').textContent = pengumumanList.length;
-            document.getElementById('pengumuman-hari-ini').textContent = pengumumanHariIni;
-            document.getElementById('pengumuman-penting').textContent = pengumumanPenting;
-        }
-        
-        function updateLastUpdated() {
-            const now = new Date();
-            const element = document.getElementById('last-updated');
-            if (element) {
-                element.textContent = now.toLocaleString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
+            if (navigator.share) {
+                navigator.share({
+                    title: p.judul,
+                    text: p.konten.substring(0, 100),
+                    url: window.location.href
                 });
+            } else {
+                navigator.clipboard.writeText(`${p.judul}\n\n${p.konten.substring(0, 200)}...`);
+                alert('Pengumuman disalin ke clipboard!');
             }
         }
-        
+
         // ==============================
-        // AUTO-REFRESH
+        // LOAD DATA DARI GITHUB
         // ==============================
-        
-        function setupAutoRefresh() {
-            setInterval(() => {
-                console.log('🔄 Auto-refresh pengumuman...');
-                loadPengumumanData();
-            }, 30000);
+        async function loadData() {
+            showLoading();
+            
+            try {
+                const url = `https://raw.githubusercontent.com/${CONFIG.GITHUB_USER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${CONFIG.DATA_FILE}`;
+                const response = await fetch(`${url}?t=${Date.now()}`);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                pengumuman = (data.pengumuman || []).map((item, index) => ({
+                    id: item.id || index + 1,
+                    judul: item.judul || 'Tanpa Judul',
+                    konten: item.konten || '',
+                    kategori: item.kategori || '',
+                    lampiran: item.lampiran || '',
+                    tanggal: item.tanggal || new Date().toISOString()
+                }));
+                
+                // Apply filters and render
+                filterPengumuman();
+                renderPengumuman();
+                updateStats();
+                showContent();
+                updateLastUpdated();
+                
+                console.log(`✅ ${pengumuman.length} pengumuman loaded`);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showError('Gagal memuat data pengumuman. Periksa koneksi internet.');
+            }
         }
-        
+
         // ==============================
-        // FUNGSI DEBUG
+        // EVENT LISTENERS
         // ==============================
-        
-        window.debugPengumuman = async function() {
-            console.log('🔍 Debug mode activated');
+        function setupEventListeners() {
+            // Search
+            elements.searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                filterPengumuman();
+                renderPengumuman();
+            });
             
-            const testUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${DATA_FILE}`;
-            console.log(`Testing URL: ${testUrl}`);
+            // Filter buttons
+            document.querySelectorAll('.filter-tag').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.dataset.filter;
+                    filterPengumuman();
+                    renderPengumuman();
+                });
+            });
             
-            try {
-                const response = await fetch(testUrl);
-                console.log('Response Status:', response.status, response.statusText);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Data structure:', data);
-                    
-                    if (data.pengumuman) {
-                        console.log(`Found ${data.pengumuman.length} pengumuman:`);
-                        data.pengumuman.forEach((p, i) => {
-                            console.log(`[${i + 1}] ID: ${p.id}, Judul: "${p.judul}", Tanggal: ${p.tanggal}`);
-                        });
-                    }
-                    
-                    if (data.pengumuman && data.pengumuman.length > 0) {
-                        alert(`✅ Data ditemukan: ${data.pengumuman.length} pengumuman`);
-                        displayPengumuman(data.pengumuman);
-                        updateStats(data.pengumuman);
-                    } else {
-                        alert('⚠️ Data ditemukan tapi array pengumuman kosong');
-                    }
-                } else {
-                    alert(`❌ Gagal mengambil data: ${response.status} ${response.statusText}`);
-                }
-            } catch (error) {
-                console.error('Debug error:', error);
-                alert(`❌ Error: ${error.message}`);
-            }
-        };
-        
-        window.testConnection = async function() {
-            console.log('🔗 Testing connection...');
+            // Modal
+            elements.modalClose.addEventListener('click', () => {
+                elements.modal.style.display = 'none';
+            });
             
-            try {
-                const repoUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`;
-                console.log(`Testing repo: ${repoUrl}`);
-                
-                const repoResponse = await fetch(repoUrl);
-                console.log('Repo exists:', repoResponse.ok);
-                
-                if (!repoResponse.ok) {
-                    throw new Error(`Repository tidak ditemukan: ${repoResponse.status}`);
+            elements.modal.addEventListener('click', (e) => {
+                if (e.target === elements.modal) {
+                    elements.modal.style.display = 'none';
                 }
-                
-                const fileUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${DATA_FILE}`;
-                console.log(`Testing file: ${fileUrl}`);
-                
-                const fileResponse = await fetch(fileUrl);
-                console.log('File exists:', fileResponse.ok);
-                
-                if (fileResponse.ok) {
-                    const fileData = await fileResponse.json();
-                    console.log('File size:', fileData.size, 'bytes');
-                    
-                    const contentUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${DATA_FILE}`;
-                    console.log(`Testing content: ${contentUrl}`);
-                    
-                    const contentResponse = await fetch(contentUrl);
-                    console.log('Content accessible:', contentResponse.ok);
-                    
-                    if (contentResponse.ok) {
-                        const text = await contentResponse.text();
-                        console.log('Content preview:', text.substring(0, 200));
-                        
-                        try {
-                            const json = JSON.parse(text);
-                            console.log('JSON valid:', true);
-                            console.log('Pengumuman count:', json.pengumuman?.length || 0);
-                            
-                            alert(`✅ Semua test berhasil!\n• Repository: ADA\n• File: ADA\n• JSON: VALID\n• Pengumuman: ${json.pengumuman?.length || 0}`);
-                        } catch (parseError) {
-                            alert('❌ File ditemukan tapi format JSON tidak valid');
-                        }
-                    } else {
-                        alert('❌ File ditemukan tapi tidak bisa diakses');
-                    }
-                } else {
-                    alert('⚠️ Repository ditemukan tapi file data.json tidak ada');
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    elements.modal.style.display = 'none';
                 }
-                
-            } catch (error) {
-                console.error('Connection test error:', error);
-                alert(`❌ Test gagal: ${error.message}`);
-            }
-        };
-        
+                if (e.key === '/' && e.target !== elements.searchInput) {
+                    e.preventDefault();
+                    elements.searchInput.focus();
+                }
+            });
+        }
+
         // ==============================
-        // INISIALISASI
+        // INITIALIZATION
         // ==============================
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 Pengumuman page initialized');
-            console.log('==============================');
-            console.log(`GitHub User: ${GITHUB_USER}`);
-            console.log(`Repository: ${GITHUB_REPO}`);
-            console.log(`Branch: ${GITHUB_BRANCH}`);
-            console.log(`Data File: ${DATA_FILE}`);
-            console.log('==============================\n');
+        async function init() {
+            console.log('🚀 Starting Pengumuman App...');
+            
+            // Load background first
+            await loadBackground();
+            
+            // Setup event listeners
+            setupEventListeners();
             
             // Load data
-            loadPengumumanData();
+            loadData();
             
-            // Setup auto-refresh
-            setupAutoRefresh();
+            // Auto-refresh every minute
+            setInterval(loadData, 60000);
             
-            // Add debug info
-            console.log('🛠️ Available debug commands:');
-            console.log('- debugPengumuman() - Debug data loading');
-            console.log('- testConnection() - Test GitHub connection');
-            console.log('- loadPengumumanData() - Manual reload');
-            
-            // Expose for testing
-            window.GITHUB_USER = GITHUB_USER;
-            window.GITHUB_REPO = GITHUB_REPO;
-            window.loadPengumumanData = loadPengumumanData;
-        });
-        
-        // Refresh when tab becomes visible
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                console.log('👀 Tab aktif, refresh data...');
-                loadPengumumanData();
-            }
-        });
+            // Refresh when tab becomes visible
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    loadData();
+                }
+            });
+        }
+
+        // Start the app
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
